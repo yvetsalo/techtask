@@ -1,0 +1,6 @@
+# Project
+.idea
+.git
+vendor
+.php_cs.cache
+.env
