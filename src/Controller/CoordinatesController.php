@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use App\Service\GeocoderManager;
+use App\Service\ValueObjectFactory\AddressFactory;
 use App\ValueObject\Address;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -19,14 +20,14 @@ class CoordinatesController extends AbstractController
      * @param Request $request
      * @return Response
      */
-    public function myNewAction(Request $request, GeocoderManager $geocoderManager): Response
+    public function myNewAction(Request $request, GeocoderManager $geocoderManager, AddressFactory $addressFactory): Response
     {
-        $country = $request->get('country', 'lithuania');
-        $city = $request->get('city', 'vilnius');
-        $street = $request->get('street', 'jasinskio 16');
-        $postcode = $request->get('postcode', '01112');
-
-        $address = new Address($country, $city, $street, $postcode);
+        $address = $addressFactory->fromArray([
+            'country' => $request->get('country', 'lithuania'),
+            'city' => $request->get('city', 'vilnius'),
+            'street' => $request->get('street', 'jasinskio 16'),
+            'postcode'=> $request->get('postcode', '01112'),
+        ]);
 
         $coordinates = $geocoderManager->geocode($address);
 
