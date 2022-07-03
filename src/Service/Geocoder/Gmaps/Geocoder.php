@@ -2,20 +2,29 @@
 
 namespace App\Service\Geocoder\Gmaps;
 
-use App\Service\Geocoder\HttpClientAwareGeocoder;
+use App\Service\Client;
+use App\Service\GeocoderInterface;
 use App\ValueObject\Address;
 use App\ValueObject\Coordinates;
 
-class GmapsGeocoder extends HttpClientAwareGeocoder
+class Geocoder implements GeocoderInterface
 {
-    private GmapsRequestBuilder $requestBuilder;
-    private GmapsResponseTransformer $responseTransformer;
-    private const GMAPS_ENDPOINT = 'https://maps.googleapis.com/maps/api/geocode/json';
+    private RequestBuilder $requestBuilder;
+    private ResponseTransformer $responseTransformer;
+    private Client $client;
+    private string $endpoint;
 
-    public function __construct(GmapsRequestBuilder $requestBuilder, GmapsResponseTransformer $gmapsResponseTransformer)
+    public function __construct(
+        RequestBuilder      $requestBuilder,
+        ResponseTransformer $gmapsResponseTransformer,
+        Client              $client,
+        string              $endpoint
+    )
     {
         $this->requestBuilder = $requestBuilder;
         $this->responseTransformer = $gmapsResponseTransformer;
+        $this->client = $client;
+        $this->endpoint = $endpoint;
     }
 
     public function geocode(Address $address): ?Coordinates
@@ -27,7 +36,7 @@ class GmapsGeocoder extends HttpClientAwareGeocoder
             $address->getPostcode()
         );
 
-        $response = $this->getClient()->get(self::GMAPS_ENDPOINT, $request);
+        $response = $this->client->get($this->endpoint, $request);
 
         return $this->responseTransformer->transformToCoordinates($response->getBody()->getContents());
     }

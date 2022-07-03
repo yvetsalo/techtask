@@ -2,20 +2,29 @@
 
 namespace App\Service\Geocoder\Hmaps;
 
-use App\Service\Geocoder\HttpClientAwareGeocoder;
+use App\Service\Client;
+use App\Service\GeocoderInterface;
 use App\ValueObject\Address;
 use App\ValueObject\Coordinates;
 
-class HmapsGeocoder extends HttpClientAwareGeocoder
+class Geocoder implements GeocoderInterface
 {
-    private HmapsRequestBuilder $requestBuilder;
-    private HmapsResponseTransformer $responseTransformer;
-    private const HMAPS_ENDPOINT = 'https://geocode.search.hereapi.com/v1/geocode';
+    private RequestBuilder $requestBuilder;
+    private ResponseTransformer $responseTransformer;
+    private Client $client;
+    private string $endpoint;
 
-    public function __construct(HmapsRequestBuilder $requestBuilder, HmapsResponseTransformer $responseTransformer)
+    public function __construct(
+        RequestBuilder      $requestBuilder,
+        ResponseTransformer $responseTransformer,
+        Client              $client,
+        string              $endpoint
+    )
     {
         $this->requestBuilder = $requestBuilder;
         $this->responseTransformer = $responseTransformer;
+        $this->client = $client;
+        $this->endpoint = $endpoint;
     }
 
     public function geocode(Address $address): ?Coordinates
@@ -27,7 +36,7 @@ class HmapsGeocoder extends HttpClientAwareGeocoder
             $address->getPostcode()
         );
 
-        $response = $this->getClient()->get(self::HMAPS_ENDPOINT, $request);
+        $response = $this->client->get($this->endpoint, $request);
 
         return $this->responseTransformer->transformToCoordinates($response->getBody()->getContents());
     }

@@ -4,11 +4,15 @@ namespace App\Service\Geocoder\Gmaps;
 
 use App\ValueObject\Coordinates;
 
-class GmapsResponseTransformer
+class ResponseTransformer
 {
     public function transformToCoordinates(string $content): ?Coordinates
     {
         $data = json_decode($content, true, 512, JSON_THROW_ON_ERROR);
+
+        if (!isset($data['results'])) {
+            return null;
+        }
 
         if (count($data['results']) === 0) {
             return null;

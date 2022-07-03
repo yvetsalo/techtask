@@ -18,7 +18,7 @@ class GeocoderManager
     /**
      * @param iterable<GeocoderInterface> $geocoders
      */
-    public function __construct($geocoders, ResolvedAddressRepository $resolvedAddressRepository)
+    public function __construct(iterable $geocoders, ResolvedAddressRepository $resolvedAddressRepository)
     {
         $this->geocoders = $geocoders;
         $this->resolvedAddressRepository = $resolvedAddressRepository;

@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace App\Controller;
+namespace App\Http\Controller;
 
+use App\Http\ResponseBuilder\CoordinatesBuilder;
 use App\Service\GeocoderManager;
-use App\Service\ValueObjectFactory\AddressFactory;
-use App\ValueObject\Address;
+use App\Service\Factory\AddressFactory;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -20,7 +20,7 @@ class CoordinatesController extends AbstractController
      * @param Request $request
      * @return Response
      */
-    public function coordinatesAction(Request $request, GeocoderManager $geocoderManager, AddressFactory $addressFactory): Response
+    public function coordinatesAction(Request $request, GeocoderManager $geocoderManager, AddressFactory $addressFactory, CoordinatesBuilder $builder): Response
     {
         $address = $addressFactory->fromArray([
             'country' => $request->get('country', 'lt'),
@@ -31,6 +31,6 @@ class CoordinatesController extends AbstractController
 
         $coordinates = $geocoderManager->geocode($address);
 
-        return new JsonResponse(['lat' => $coordinates->getLat(), 'lng' => $coordinates->getLng()]);
+        return $builder->toJsonResponse($coordinates);
     }
 }

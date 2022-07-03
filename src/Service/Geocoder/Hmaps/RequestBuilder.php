@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Service\Geocoder\Gmaps;
+namespace App\Service\Geocoder\Hmaps;
 
-class GmapsRequestBuilder
+class RequestBuilder
 {
     private string $apiKey;
 
@@ -15,9 +15,8 @@ class GmapsRequestBuilder
     {
         return [
             'query' => [
-                'address' => $street,
-                'components' => implode('|', ["country:{$country}", "locality:{$city}", "postal_code:{$postcode}"]),
-                'key' => $this->apiKey
+                'qq' => implode(';', ["country={$country}", "city={$city}", "street={$street}", "postalCode={$postcode}"]),
+                'apiKey' => $this->apiKey
             ]
         ];
     }

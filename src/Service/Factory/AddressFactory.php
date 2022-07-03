@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Service\ValueObjectFactory;
+namespace App\Service\Factory;
 
 use App\ValueObject\Address;
 

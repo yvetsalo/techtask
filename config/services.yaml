@@ -6,6 +6,8 @@
 parameters:
     GMAPS_API_KEY: '%env(GOOGLE_GEOCODING_API_KEY)%'
     HMAPS_API_KEY: '%env(HEREMAPS_GEOCODING_API_KEY)%'
+    GMAPS_API_ENDPOINT: '%env(GOOGLE_GEOCODING_API_ENDPOINT)%'
+    HMAPS_API_ENDPOINT: '%env(HEREMAPS_GEOCODING_API_ENDPOINT)%'
 
 services:
     # default configuration for services in *this* file
@@ -29,18 +31,26 @@ services:
 
     # controllers are imported separately to make sure services can be injected
     # as action arguments even if you don't extend any base controller class
-    App\Controller\:
-        resource: '../src/Controller/'
+    App\Http\Controller\:
+        resource: '../src/Http/Controller/'
         tags: ['controller.service_arguments']
 
     App\Service\GeocoderManager:
         arguments:
             $geocoders: !tagged_iterator { tag: geo.geocoder }
 
-    App\Service\Geocoder\Gmaps\GmapsRequestBuilder:
+    App\Service\Geocoder\Gmaps\Geocoder:
+        arguments:
+            $endpoint: '%GMAPS_API_ENDPOINT%'
+
+    App\Service\Geocoder\Hmaps\Geocoder:
+        arguments:
+            $endpoint: '%HMAPS_API_ENDPOINT%'
+
+    App\Service\Geocoder\Gmaps\RequestBuilder:
         arguments:
             $apiKey: '%GMAPS_API_KEY%'
 
-    App\Service\Geocoder\Hmaps\HmapsRequestBuilder:
+    App\Service\Geocoder\Hmaps\RequestBuilder:
         arguments:
             $apiKey: '%HMAPS_API_KEY%'

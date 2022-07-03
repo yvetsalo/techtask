@@ -4,11 +4,15 @@ namespace App\Service\Geocoder\Hmaps;
 
 use App\ValueObject\Coordinates;
 
-class HmapsResponseTransformer
+class ResponseTransformer
 {
     public function transformToCoordinates(string $content): ?Coordinates
     {
         $data = json_decode($content, true, 512, JSON_THROW_ON_ERROR);
+
+        if (!isset($data['items'])) {
+            return null;
+        }
 
         if (count($data['items']) === 0) {
             return null;
