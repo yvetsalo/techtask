@@ -3,7 +3,7 @@
 namespace App\Service\Geocoder\Hmaps;
 
 use App\Service\Client;
-use App\Service\GeocoderInterface;
+use App\Service\Geocoder\GeocoderInterface;
 use App\ValueObject\Address;
 use App\ValueObject\Coordinates;
 

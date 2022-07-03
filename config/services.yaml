@@ -16,7 +16,7 @@ services:
         autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
     _instanceof:
         # services whose classes are instances of CustomInterface will be tagged automatically
-        App\Service\GeocoderInterface:
+        App\Service\Geocoder\GeocoderInterface:
             tags: [ 'geo.geocoder' ]
 
     # makes classes in src/ available to be used as services
