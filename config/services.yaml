@@ -35,7 +35,7 @@ services:
 
     App\Service\GeocoderManager:
         arguments:
-            - !tagged_iterator { tag: geo.geocoder }
+            $geocoders: !tagged_iterator { tag: geo.geocoder }
 
     App\Service\Geocoder\Gmaps\GmapsRequestBuilder:
         arguments:

@@ -2,6 +2,7 @@
 
 namespace App\Service;
 
+use App\Repository\ResolvedAddressRepository;
 use App\ValueObject\Address;
 use App\ValueObject\Coordinates;
 
@@ -12,12 +13,15 @@ class GeocoderManager
      */
     private iterable $geocoders;
 
+    private ResolvedAddressRepository $resolvedAddressRepository;
+
     /**
      * @param iterable<GeocoderInterface> $geocoders
      */
-    public function __construct($geocoders)
+    public function __construct($geocoders, ResolvedAddressRepository $resolvedAddressRepository)
     {
         $this->geocoders = $geocoders;
+        $this->resolvedAddressRepository = $resolvedAddressRepository;
     }
 
     /**
@@ -26,12 +30,20 @@ class GeocoderManager
      */
     public function geocode(Address $address): ?Coordinates
     {
+        if ($cachedAddress = $this->resolvedAddressRepository->getByAddress($address)) {
+            return new Coordinates($cachedAddress->getLat(), $cachedAddress->getLng());
+        }
+
+        $coordinates = null;
+
         foreach ($this->geocoders as $geocoder) {
-            if ($result = $geocoder->geocode($address)) {
-                return $result;
+            if ($coordinates = $geocoder->geocode($address)) {
+                break;
             }
         }
 
-        return null;
+        $this->resolvedAddressRepository->saveResolvedAddress($address, $coordinates);
+
+        return $coordinates;
     }
 }

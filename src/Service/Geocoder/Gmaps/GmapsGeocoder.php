@@ -6,7 +6,7 @@ use App\Service\Geocoder\HttpClientAwareGeocoder;
 use App\ValueObject\Address;
 use App\ValueObject\Coordinates;
 
-class GmapsGeocoder //extends HttpClientAwareGeocoder
+class GmapsGeocoder extends HttpClientAwareGeocoder
 {
     private GmapsRequestBuilder $requestBuilder;
     private GmapsResponseTransformer $responseTransformer;
