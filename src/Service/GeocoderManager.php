@@ -31,12 +31,8 @@ class GeocoderManager
      */
     public function geocode(Address $address): ?Coordinates
     {
-        if ($cachedAddress = $this->resolvedAddressRepository->getByAddress($address)) {
-            if (is_null($cachedAddress->getLng()) && is_null($cachedAddress->getLat())) {
-                return null;
-            }
-
-            return new Coordinates($cachedAddress->getLat(), $cachedAddress->getLng());
+        if ($cachedResolvedAddress = $this->resolvedAddressRepository->getByAddress($address)) {
+            return $cachedResolvedAddress->getCoordinates();
         }
 
         $coordinates = null;

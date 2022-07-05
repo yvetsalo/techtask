@@ -2,7 +2,7 @@
 
 namespace App\Tests\Unit\Service;
 
-use App\Entity\ResolvedAddress;
+use App\ValueObject\ResolvedAddress;
 use App\Repository\ResolvedAddressRepository;
 use App\Service\Geocoder\GeocoderInterface;
 use App\Service\GeocoderManager;
@@ -28,7 +28,7 @@ class GeocoderManagerTest extends TestCase
         $geocoderManager = new GeocoderManager([$this->geocoderMock], $this->resolvedAddressRepositoryMock);
 
         $this->resolvedAddressRepositoryMock->expects($this->once())->method('getByAddress')->willReturn(
-            new ResolvedAddress()
+            new ResolvedAddress(new Address('test', 'test', 'test', 'test'), null)
         );
 
         $this->geocoderMock->expects($this->never())->method('geocode');
@@ -43,9 +43,10 @@ class GeocoderManagerTest extends TestCase
     {
         $geocoderManager = new GeocoderManager([$this->geocoderMock], $this->resolvedAddressRepositoryMock);
 
-        $expectedAddress = new ResolvedAddress();
-        $expectedAddress->setLat(1);
-        $expectedAddress->setLng(1);
+        $expectedAddress = new ResolvedAddress(
+            new Address('test', 'test', 'test', 'test'),
+            new Coordinates(1, 1)
+        );
 
         $this->resolvedAddressRepositoryMock->expects($this->once())->method('getByAddress')
             ->willReturn($expectedAddress);
@@ -55,8 +56,8 @@ class GeocoderManagerTest extends TestCase
 
         $result = $geocoderManager->geocode(new Address('test', 'test', 'test', 'test'));
 
-        $this->assertEquals($expectedAddress->getLat(), $result->getLat());
-        $this->assertEquals($expectedAddress->getLng(), $result->getLng());
+        $this->assertEquals($expectedAddress->getCoordinates()->getLat(), $result->getLat());
+        $this->assertEquals($expectedAddress->getCoordinates()->getLng(), $result->getLng());
     }
 
     public function testsGeocodesAndSaves()
