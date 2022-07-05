@@ -5,6 +5,7 @@ namespace App\Service;
 use App\Repository\ResolvedAddressRepository;
 use App\ValueObject\Address;
 use App\ValueObject\Coordinates;
+use App\Service\Geocoder\GeocoderInterface;
 
 class GeocoderManager
 {
@@ -31,6 +32,10 @@ class GeocoderManager
     public function geocode(Address $address): ?Coordinates
     {
         if ($cachedAddress = $this->resolvedAddressRepository->getByAddress($address)) {
+            if (is_null($cachedAddress->getLng()) && is_null($cachedAddress->getLat())) {
+                return null;
+            }
+
             return new Coordinates($cachedAddress->getLat(), $cachedAddress->getLng());
         }
 
