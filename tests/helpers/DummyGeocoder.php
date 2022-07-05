@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Helpers;
 
-use App\Service\GeocoderInterface;
+use App\Service\Geocoder\GeocoderInterface;
 use App\ValueObject\Address;
 use App\ValueObject\Coordinates;
 
